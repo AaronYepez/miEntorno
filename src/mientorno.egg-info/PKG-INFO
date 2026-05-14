@@ -1,3 +1,16 @@
+Metadata-Version: 2.4
+Name: mientorno
+Version: 0.1.0
+Summary: Sistema de Gestión de Tareas - SIGE
+Requires-Python: >=3.13
+Description-Content-Type: text/markdown
+Requires-Dist: bcrypt>=5.0.0
+Requires-Dist: flet>=0.82.2
+Requires-Dist: mysql-connector-python>=9.6.0
+Requires-Dist: pydantic[email]>=2.12.5
+Requires-Dist: python-dotenv>=1.2.2
+Requires-Dist: setuptools>=79.0.0
+
 # 🚀 Nombre de tu Proyecto Genial
 
 ## 📝 Descripción del Proyecto
@@ -53,9 +66,10 @@ El alcance del sistema contempla el desarrollo de una aplicación capaz de:
 
 ## 📸 Foto del Equipo
 
-<img src="assests/aaroncito.jpeg" alt="Foto de Aarón" width="150" />
-
-<img src="assests/Rafita.jpeg.jpeg" alt="Foto de Rafael" width="150" />
+<img src="miEntorno\assests\aaroncito.jpeg" alt="Foto del equipo" width="150"/>
+![Mi Foto](assets/aaroncito.jpeg =150x) ![Foto Compa](assets/aaroncito.jpeg =150x)
+- ![Yo](https://github.com/AaronYepez/PrimerWork/blob/main/yepeto.jpg?raw=true)
+- ![Rafita Amore](https://github.com/AaronYepez/PrimerWork/blob/main/yepeto.jpg?raw=true)
 
 > # Primera Parte 
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex" 

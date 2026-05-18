@@ -3,6 +3,7 @@ from controllers.usercontroller import AuthController
 from controllers.tareacontroller import TareaController
 from views.loginView import LoginView
 from views.dashboardView import RegisterView
+from views.recoveryView import ForgotPasswordView, ResetPasswordView
 from views.Tareaview import TareaView
 
 def start(page: ft.Page):
@@ -34,6 +35,14 @@ def start(page: ft.Page):
             print("Cargando RegisterView...")
             page.views.append(RegisterView(page, auth_ctrl))
             
+        elif page.route == "/recuperar":
+            print("Cargando ForgotPasswordView...")
+            page.views.append(ForgotPasswordView(page, auth_ctrl))
+            
+        elif page.route == "/reset":
+            print("Cargando ResetPasswordView...")
+            page.views.append(ResetPasswordView(page, auth_ctrl))
+
         elif page.route == "/dashboard":
             print("Cargando TareaView...")
             page.views.append(TareaView(page, task_ctrl))

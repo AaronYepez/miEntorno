@@ -17,7 +17,7 @@ dependencies = [
 app = "main:main"
 
 [tool.uv]
-package = true 
+package = true
 
 [tool.setuptools]
 # Esto es lo que falta para que reconozca tus carpetas de controladores y modelos
@@ -25,3 +25,7 @@ packages = { find = { where = ["src"] } }
 
 [tool.setuptools.package-dir]
 "" = "src"
+
+[build-system]
+requires = ["setuptools>=79.0.0", "wheel"]
+build-backend = "setuptools.build_meta"

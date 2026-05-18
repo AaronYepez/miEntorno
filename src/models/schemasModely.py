@@ -10,6 +10,7 @@ class UsuarioSchema(BaseModel):
     nombre: str = Field(..., min_length=3, max_length=100)
     email: EmailStr
     password: str = Field(..., min_length=8)
+    telefono: Optional[str] = None
     
 class TareaSchema(BaseModel):
     titulo: str = Field(..., min_length=3, max_length=100)

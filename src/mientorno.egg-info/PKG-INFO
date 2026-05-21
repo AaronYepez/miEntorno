@@ -66,10 +66,9 @@ El alcance del sistema contempla el desarrollo de una aplicación capaz de:
 
 ## 📸 Foto del Equipo
 
-<img src="miEntorno\assests\aaroncito.jpeg" alt="Foto del equipo" width="150"/>
-![Mi Foto](assets/aaroncito.jpeg =150x) ![Foto Compa](assets/aaroncito.jpeg =150x)
-- ![Yo](https://github.com/AaronYepez/PrimerWork/blob/main/yepeto.jpg?raw=true)
-- ![Rafita Amore](https://github.com/AaronYepez/PrimerWork/blob/main/yepeto.jpg?raw=true)
+<img src="assests/aaroncito.jpeg" alt="Foto de Aarón" width="150" />
+
+<img src="assests/Rafita.jpeg.jpeg" alt="Foto de Rafael" width="150" />
 
 > # Primera Parte 
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex" 
@@ -80,3 +79,66 @@ uv add flet
 crear DATABASE.PY
 schemas.py
 23308060610451@cetis61.edu.mx
+
+---
+
+## 🚀 Cómo ejecutar el proyecto después de clonar
+
+1. Clona el repositorio:
+   ```powershell
+   git clone <URL_DEL_REPOSITORIO>
+   cd miEntorno
+   ```
+2. Crea y activa el entorno virtual:
+   ```powershell
+   python -m venv .venv
+   .\.venv\Scripts\Activate.ps1
+   ```
+   Si `pip` no está disponible, ejecuta:
+   ```powershell
+   python -m ensurepip --upgrade
+   ```
+3. Actualiza pip y instala las dependencias:
+   ```powershell
+   python -m pip install --upgrade pip
+   python -m pip install .
+   python -m pip install uv
+   ```
+4. Copia el archivo de ejemplo de variables de entorno y configura tu base de datos y correo:
+   ```powershell
+   copy .env.example .env
+   ```
+5. Ajusta los valores en `.env`:
+   - `DB_HOST`
+   - `DB_USER`
+   - `DB_PASSWORD`
+   - `DB_NAME`
+   - `DB_PORT`
+   - `SMTP_HOST`
+   - `SMTP_PORT`
+   - `SMTP_USER`
+   - `SMTP_PASSWORD`
+   - `EMAIL_FROM`
+6. Importa la base de datos si aún no existe:
+   - Usa el archivo `src/database/tareas.sql` en tu gestor MySQL.
+7. Ejecuta la aplicación con uv:
+   ```powershell
+   uv run .
+   ```
+
+> Si prefieres no usar `uv`, también puedes ejecutar:
+> ```powershell
+> .\.venv\Scripts\python.exe -m src.main
+> ```
+
+## 🔐 Recuperación de contraseña
+
+- Las contraseñas se guardan en la base de datos con cifrado `bcrypt`.
+- Si el usuario olvida su contraseña, el sistema genera un token seguro y envía un correo de recuperación.
+- En la pantalla de login, hay un botón `¿Olvidaste tu contraseña?` para iniciar el proceso.
+
+## 🎨 Diseño MoodDay
+
+- El proyecto ahora tiene una apariencia más suave y amigable, con colores pastel y mensajes de diario emocional.
+- La pantalla principal se enfoca en el registro de estados de ánimo como un diario personal.
+- El flujo de registro, inicio y recuperación está diseñado para una experiencia clara y segura.

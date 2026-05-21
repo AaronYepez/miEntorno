@@ -1,6 +1,5 @@
 import bcrypt
 import secrets
-import random
 from datetime import datetime, timedelta
 from models.databaseModel import Database
 
@@ -40,36 +39,19 @@ class UsuarioModel:
             return user
         return None
 
-    def existe_email(self, email):
-        """Verifica si un email ya está registrado"""
-        conn = self.db.get_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT id_usuario FROM usuario WHERE email = %s", (email,))
-        result = cursor.fetchone()
-        conn.close()
-        return result is not None
-
     def crear_token_recuperacion(self, email):
-        # Generar código de 6 dígitos
-        code = f"{random.randint(0, 999999):06d}"
-        expires = datetime.utcnow() + timedelta(minutes=15)  # Válido por 15 minutos
+        token = secrets.token_urlsafe(32)
+        expires = datetime.utcnow() + timedelta(hours=1)
         conn = self.db.get_connection()
         cursor = conn.cursor()
-        try:
-            cursor.execute(
-                "UPDATE usuario SET reset_token = %s, reset_token_expires = %s WHERE email = %s",
-                (code, expires.strftime('%Y-%m-%d %H:%M:%S'), email)
-            )
-            conn.commit()
-            success = cursor.rowcount > 0
-            if success:
-                return code
-            return None
-        except Exception as e:
-            print(f"Error al crear token: {e}")
-            return None
-        finally:
-            conn.close()
+        cursor.execute(
+            "UPDATE usuario SET reset_token = %s, reset_token_expires = %s WHERE email = %s",
+            (token, expires.strftime('%Y-%m-%d %H:%M:%S'), email)
+        )
+        conn.commit()
+        success = cursor.rowcount > 0
+        conn.close()
+        return token if success else None
 
     def obtener_usuario_por_token(self, token):
         conn = self.db.get_connection()
@@ -98,6 +80,24 @@ class UsuarioModel:
         conn.close()
         return rows > 0
 
+class TareasModel:
+    def __init__(self):
+        self.db = Database()
+
+    def crear_tarea(self, data, usuario_id):
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                "INSERT INTO tareas (titulo, descripcion, prioridad, clasificacion, usuario_id) VALUES (%s, %s, %s, %s, %s)",
+                (data.titulo, data.descripcion, data.prioridad, data.clasificacion, usuario_id)
+            )
+            conn.commit()
+            return True
+        finally:
+            conn.close()
+
+    def obtener_tareas(self, usuario_id):
         conn = self.db.get_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM tareas WHERE usuario_id = %s", (usuario_id,))

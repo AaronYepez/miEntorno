@@ -20,22 +20,16 @@ class AuthController:
         return None, "Email o contraseña incorrectos"
         
     def registrar_usuario(self, nombre, email, password, telefono=None):
-        # Validar que el email no exista
-        if self.model.existe_email(email):
-            return False, "Este correo electrónico ya está registrado."
-        
         try:
             nuevo_usuario = UsuarioSchema(nombre=nombre, email=email, password=password, telefono=telefono)
             success = self.model.registrar(nuevo_usuario)
-            if success:
-                return success, "Usuario registrado exitosamente. Inicia sesión ahora."
-            return False, "Error al registrar el usuario."
+            return success, "Usuario registrado exitosamente."
         except ValidationError as e:
             return False, e.errors()[0]['msg']
 
     def enviar_email_recuperacion(self, email):
-        code = self.model.crear_token_recuperacion(email)
-        if not code:
+        token = self.model.crear_token_recuperacion(email)
+        if not token:
             return False, "No existe ningún usuario registrado con ese correo."
 
         smtp_host = os.getenv("SMTP_HOST")
@@ -45,22 +39,17 @@ class AuthController:
         email_from = os.getenv("EMAIL_FROM")
 
         if not smtp_host or not smtp_user or not smtp_password or not email_from:
-            # Si no hay SMTP configurado, devolver el código (para testing)
-            print(f"CÓDIGO DE RECUPERACIÓN PARA TESTING: {code}")
-            return True, f"Código de recuperación: {code} (válido por 15 minutos)"
+            return False, "No está configurado el servidor SMTP. Actualiza las variables de entorno en .env."
 
         mensaje = EmailMessage()
-        mensaje["Subject"] = "MoodDay - Código de recuperación de contraseña"
+        mensaje["Subject"] = "Recuperación de contraseña MoodDay"
         mensaje["From"] = email_from
         mensaje["To"] = email
         mensaje.set_content(
-            f"Hola,\n\n"
-            f"Se ha solicitado restablecer tu contraseña de MoodDay.\n\n"
-            f"Usa este código para recuperar tu cuenta:\n\n"
-            f"    {code}\n\n"
-            f"Este código es válido por 15 minutos.\n"
-            f"Si no solicitaste este cambio, ignora este mensaje.\n\n"
-            f"Saludos,\nMoodDay"
+            f"Hola,\n\nSe ha solicitado restablecer tu contraseña de MoodDay.\n\n"
+            f"Usa este código para recuperar tu cuenta:\n\n{token}\n\n"
+            "El código es válido por 1 hora. Si no solicitaste este cambio, ignora este mensaje.\n\n"
+            "Saludos,\nMoodDay"
         )
 
         try:
@@ -80,5 +69,5 @@ class AuthController:
 
         success = self.model.actualizar_password_por_token(token, password)
         if success:
-            return True, "Contraseña restablecida con éxito. Inicia sesión con tu nueva contraseña."
-        return False, "El código es inválido o ha expirado. Solicita uno nuevo."
+            return True, "Contraseña restablecida con éxito."
+        return False, "El código es inválido o ha expirado."

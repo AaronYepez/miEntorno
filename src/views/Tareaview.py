@@ -1,13 +1,14 @@
 import flet as ft
+from config.themes import MoodDayTheme
 
-# esta vista es la que muestra el dashboard de tareas
-# y guarda nuevas tareas para el usuario que inició sesión
+# Vista del dashboard principal después de iniciar sesión
+# Muestra las emociones registradas del usuario
 
 def TareaView(page, tarea_controller):
     user = page.session.store.get("user")
     if not user:
         page.go("/")
-        return ft.View("/", [ft.Text("redireccionando al login...")])
+        return ft.View("/", [ft.Text("Redireccionando al login...")])
 
     lista_tareas = ft.Column(scroll=ft.ScrollMode.ALWAYS, expand=True)
 
@@ -15,22 +16,33 @@ def TareaView(page, tarea_controller):
         lista_tareas.controls.clear()
         tareas = tarea_controller.obtener_lista(user["id_usuario"])
         if not tareas:
-            lista_tareas.controls.append(ft.Text("no tienes tareas aún. agrega una nueva arriba."))
+            lista_tareas.controls.append(
+                ft.Container(
+                    padding=20,
+                    bgcolor=MoodDayTheme.BACKGROUND_CARD,
+                    border_radius=MoodDayTheme.BORDER_RADIUS,
+                    content=ft.Text("No tienes registros emocionales aún. Agrega uno nuevo arriba.", size=14, color=MoodDayTheme.TEXT_SECONDARY)
+                )
+            )
         else:
             for t in tareas:
                 lista_tareas.controls.append(
                     ft.Card(
+                        elevation=2,
+                        shape=ft.RoundedRectangleBorder(radius=MoodDayTheme.BORDER_RADIUS),
                         content=ft.Container(
                             content=ft.ListTile(
-                                title=ft.Text(t["titulo"], weight="bold"),
+                                title=ft.Text(t["titulo"], weight="bold", color=MoodDayTheme.TEXT_PRIMARY),
                                 subtitle=ft.Text(
-                                    f"{t.get('descripcion', '')}\nPrioridad: {t.get('prioridad', 'media')}"
+                                    f"{t.get('descripcion', '')}\nPrioridad: {t.get('prioridad', 'media')}",
+                                    color=MoodDayTheme.TEXT_SECONDARY,
+                                    size=12
                                 ),
                                 trailing=ft.Container(
-                                    content=ft.Text(t.get("estado", "pendiente"), color="white", size=12),
-                                    bgcolor=ft.Colors.ORANGE_300,
-                                    padding=5,
-                                    border_radius=3
+                                    content=ft.Text(t.get("estado", "pendiente"), color=MoodDayTheme.TEXT_LIGHT, size=12, weight="bold"),
+                                    bgcolor=MoodDayTheme.ACCENT,
+                                    padding=8,
+                                    border_radius=5
                                 )
                             ),
                             padding=10
@@ -39,19 +51,30 @@ def TareaView(page, tarea_controller):
                 )
         page.update()
 
-    txt_titulo = ft.TextField(label="Título de la tarea", expand=True)
+    txt_titulo = ft.TextField(
+        label="Título del registro",
+        expand=True,
+        border_radius=MoodDayTheme.BORDER_RADIUS,
+        border_color=MoodDayTheme.BORDER_COLOR
+    )
+    
     txt_descripcion = ft.TextField(
-        label="Descripción (opcional)",
+        label="¿Cómo te sientes? Describe tu estado emocional",
         expand=True,
         multiline=True,
-        max_lines=3
+        max_lines=3,
+        border_radius=MoodDayTheme.BORDER_RADIUS,
+        border_color=MoodDayTheme.BORDER_COLOR
     )
 
     def add_task(e):
         success, msg = tarea_controller.guardar_nueva(
             user["id_usuario"], txt_titulo.value, txt_descripcion.value
         )
-        page.snack_bar = ft.SnackBar(ft.Text(msg))
+        page.snack_bar = ft.SnackBar(
+            ft.Text(msg, color=MoodDayTheme.TEXT_LIGHT),
+            bgcolor=MoodDayTheme.SUCCESS if success else MoodDayTheme.ERROR
+        )
         page.snack_bar.open = True
         if success:
             txt_titulo.value = ""
@@ -61,13 +84,17 @@ def TareaView(page, tarea_controller):
 
     view = ft.View(
         route="/dashboard",
+        bgcolor=MoodDayTheme.BACKGROUND_LIGHT,
         appbar=ft.AppBar(
-            title=ft.Text(f"Bienvenido, {user['nombre']}"),
+            title=ft.Text(f"MoodDay - Bienvenido, {user['nombre']}", color=MoodDayTheme.TEXT_LIGHT),
+            bgcolor=MoodDayTheme.PRIMARY,
+            color=MoodDayTheme.TEXT_LIGHT,
             actions=[
                 ft.IconButton(
                     ft.Icons.EXIT_TO_APP,
                     tooltip="Cerrar sesión",
-                    on_click=lambda e: page.session.store.clear() or page.go("/")
+                    icon_color=MoodDayTheme.TEXT_LIGHT,
+                    on_click=lambda e: (page.session.store.clear(), page.go("/"))
                 )
             ]
         ),
@@ -75,16 +102,41 @@ def TareaView(page, tarea_controller):
             ft.Container(
                 content=ft.Column(
                     [
-                        ft.Row([txt_titulo, ft.FloatingActionButton(icon=ft.Icons.ADD, on_click=add_task)]),
-                        txt_descripcion,
-                        ft.Divider(),
-                        ft.Text("mis tareas pendientes", size=20, weight="bold"),
+                        ft.Container(
+                            padding=MoodDayTheme.PADDING_STANDARD,
+                            bgcolor=MoodDayTheme.BACKGROUND_CARD,
+                            border_radius=MoodDayTheme.BORDER_RADIUS,
+                            shadow=ft.BoxShadow(blur_radius=10, color="#00000010"),
+                            content=ft.Column(
+                                [
+                                    ft.Text("Registra tu emoción", size=18, weight="bold", color=MoodDayTheme.TEXT_PRIMARY),
+                                    ft.Row([txt_titulo], spacing=10),
+                                    txt_descripcion,
+                                    ft.Row(
+                                        [
+                                            ft.ElevatedButton(
+                                                "Guardar registro",
+                                                on_click=add_task,
+                                                bgcolor=MoodDayTheme.PRIMARY,
+                                                color=MoodDayTheme.TEXT_LIGHT,
+                                                height=40
+                                            )
+                                        ],
+                                        alignment=ft.MainAxisAlignment.END
+                                    )
+                                ],
+                                expand=False,
+                                spacing=MoodDayTheme.SPACING_STANDARD
+                            )
+                        ),
+                        ft.Divider(height=2, color=MoodDayTheme.BORDER_COLOR),
+                        ft.Text("Tus registros emocionales", size=18, weight="bold", color=MoodDayTheme.TEXT_PRIMARY),
                         lista_tareas
                     ],
                     expand=True,
-                    spacing=15
+                    spacing=MoodDayTheme.SPACING_STANDARD
                 ),
-                padding=20,
+                padding=MoodDayTheme.PADDING_STANDARD,
                 expand=True
             )
         ]

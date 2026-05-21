@@ -5,15 +5,16 @@ from views.loginView import LoginView
 from views.dashboardView import RegisterView
 from views.recoveryView import ForgotPasswordView, ResetPasswordView
 from views.Tareaview import TareaView
+from config.themes import MoodDayTheme
 
 def start(page: ft.Page):
     # Configuración básica de la página
-    page.title = "SIGE - Sistema de Gestión"
-    page.window_width = 450
-    page.window_height = 700
+    page.title = "MoodDay - Diario Emocional"
+    page.window_width = 500
+    page.window_height = 750
     page.theme_mode = ft.ThemeMode.LIGHT
     
-    print("Iniciando aplicación...")
+    print("Iniciando aplicación MoodDay...")
 
     # Cargamos los controladores
     try:
@@ -22,11 +23,12 @@ def start(page: ft.Page):
         print("Controladores cargados exitosamente.")
     except Exception as ex:
         print(f"Error al iniciar controladores: {ex}")
+        return
 
     def route_change(e):
         print(f"Cambiando ruta a: {page.route}")
         page.views.clear()
-        # rutas de la app: login, registro y dashboard
+        # Rutas de la app
         if page.route == "/" or page.route == "":
             print("Cargando LoginView...")
             page.views.append(LoginView(page, auth_ctrl))
@@ -44,10 +46,10 @@ def start(page: ft.Page):
             page.views.append(ResetPasswordView(page, auth_ctrl))
 
         elif page.route == "/dashboard":
-            print("Cargando TareaView...")
+            print("Cargando TareaView (Dashboard)...")
             page.views.append(TareaView(page, task_ctrl))
         
-        # seguridad por si la ruta no existe
+        # Seguridad por si la ruta no existe
         if not page.views:
             page.views.append(
                 ft.View("/", [ft.Text("Error 404: Ruta no encontrada")])
@@ -65,8 +67,7 @@ def start(page: ft.Page):
     page.on_route_change = route_change
     page.on_view_pop = view_pop
     
-    # AJUSTE FINAL: En lugar de page.go, llamamos directamente a la función
-    # para asegurar que la primera vista se cargue sin errores de tiempo.
+    # Cargar la primera vista
     route_change(None) 
     page.update()
 

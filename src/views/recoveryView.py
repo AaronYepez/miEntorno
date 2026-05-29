@@ -31,7 +31,8 @@ def ForgotPasswordView(page: ft.Page, auth_controller):
             error_text.visible = True
             page.update()
             return
-        # Si fue exitoso, guardar el email en sesión y pasar a la pantalla de código
+        page.snack_bar = ft.SnackBar(ft.Text(msg, color=MoodDayTheme.TEXT_LIGHT), bgcolor=MoodDayTheme.SUCCESS)
+        page.snack_bar.open = True
         page.session.store.set("recovery_email", email_input.value)
         page.go("/reset")
 
@@ -81,7 +82,6 @@ def ForgotPasswordView(page: ft.Page, auth_controller):
 
 
 def ResetPasswordView(page: ft.Page, auth_controller):
-    # Paso 1: Validar código
     code_input = ft.TextField(
         label="Código de recuperación",
         width=350,
@@ -92,7 +92,6 @@ def ResetPasswordView(page: ft.Page, auth_controller):
         input_filter=ft.NumbersOnlyInputFilter()
     )
     code_error = ft.Text("", color=MoodDayTheme.ERROR, size=13, visible=False)
-    # Paso 2: Nueva contraseña (solo si el código es válido)
     password_input = ft.TextField(
         label="Nueva contraseña",
         password=True,
@@ -117,26 +116,6 @@ def ResetPasswordView(page: ft.Page, auth_controller):
 
     def validate_code(e):
         if not code_input.value:
-            code_error.value = "Ingresa el código de recuperación."
-            code_error.visible = True
-            page.update()
-            return
-        # Validar el código con el backend
-        user = auth_controller.model.obtener_usuario_por_token(code_input.value)
-        if not user:
-            code_error.value = "El código es inválido o ha expirado."
-            code_error.visible = True
-            page.update()
-            return
-        # Código válido, mostrar campos de contraseña
-        code_error.visible = False
-        code_input.read_only = True
-        password_input.visible = True
-        password_confirm_input.visible = True
-        page.update()
-
-    def validate_code(e):
-        if not code_input.value:
             code_error.value = "El código es obligatorio."
             code_error.visible = True
             page.update()
@@ -151,14 +130,12 @@ def ResetPasswordView(page: ft.Page, auth_controller):
             code_error.visible = True
             page.update()
             return
-        # Validar el código con el backend
         user = auth_controller.model.obtener_usuario_por_token(code_input.value)
         if not user:
             code_error.value = "El código es inválido o ha expirado."
             code_error.visible = True
             page.update()
             return
-        # Código válido, mostrar campos de contraseña y botones
         code_error.visible = False
         code_input.read_only = True
         password_input.visible = True
@@ -166,6 +143,7 @@ def ResetPasswordView(page: ft.Page, auth_controller):
         validar_btn.visible = False
         restablecer_btn.visible = True
         page.update()
+
     def change_password(e):
         if not password_input.value:
             pass_error.value = "La nueva contraseña es obligatoria."

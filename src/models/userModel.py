@@ -1,5 +1,4 @@
 import bcrypt
-import secrets
 import random
 from datetime import datetime, timedelta
 from models.databaseModel import Database
@@ -18,8 +17,18 @@ class UsuarioModel:
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "INSERT INTO usuario (nombre, apellido, email, password, telefono) VALUES (%s, %s, %s, %s, %s)",
-                (data.nombre, "", data.email, hashed.decode('utf-8'), data.telefono)
+                "INSERT INTO usuario (nombre, email, password, telefono, numero_control, grado, grupo, edad, sexo) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (
+                    data.nombre,
+                    data.email,
+                    hashed.decode('utf-8'),
+                    data.telefono,
+                    data.numero_control,
+                    data.grado,
+                    data.grupo,
+                    data.edad,
+                    data.sexo
+                )
             )
             conn.commit()
             return True
@@ -97,10 +106,3 @@ class UsuarioModel:
         rows = cursor.rowcount
         conn.close()
         return rows > 0
-
-        conn = self.db.get_connection()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM tareas WHERE usuario_id = %s", (usuario_id,))
-        tareas = cursor.fetchall()
-        conn.close()
-        return tareas

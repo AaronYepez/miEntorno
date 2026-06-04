@@ -14,15 +14,30 @@ class AuthController:
         self.model = UsuarioModel()
         
     def login(self, email, password):
-        user = self.model.validar_login(email, password)
+        try:
+            user = self.model.validar_login(email, password)
+        except RuntimeError as e:
+            print(f"Error en AuthController.login: {e}")
+            return None, str(e)
+        except Exception as e:
+            print(f"Error en AuthController.login: {e}")
+            return None, "Error interno al iniciar sesión. Intenta de nuevo más tarde."
+
         if user:
             return user, "Login exitoso"
         return None, "Email o contraseña incorrectos"
         
     def registrar_usuario(self, nombre, email, password, telefono=None, numero_control=None, grado=None, grupo=None, edad=None, sexo=None):
-        if self.model.existe_email(email):
-            return False, "Este correo electrónico ya está registrado."
-        
+        try:
+            if self.model.existe_email(email):
+                return False, "Este correo electrónico ya está registrado."
+        except RuntimeError as e:
+            print(f"Error en AuthController.registrar_usuario: {e}")
+            return False, str(e)
+        except Exception as e:
+            print(f"Error en AuthController.registrar_usuario: {e}")
+            return False, "Error interno al procesar el registro. Intenta de nuevo más tarde."
+
         try:
             nuevo_usuario = UsuarioSchema(
                 nombre=nombre,
@@ -41,6 +56,12 @@ class AuthController:
             return False, "Error al registrar el usuario."
         except ValidationError as e:
             return False, e.errors()[0]['msg']
+        except RuntimeError as e:
+            print(f"Error en AuthController.registrar_usuario: {e}")
+            return False, str(e)
+        except Exception as e:
+            print(f"Error en AuthController.registrar_usuario: {e}")
+            return False, "Error interno al registrar el usuario. Intenta de nuevo más tarde."
 
     def enviar_email_recuperacion(self, email):
         if not self.model.existe_email(email):

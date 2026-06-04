@@ -72,6 +72,8 @@ El alcance del sistema contempla el desarrollo de una aplicación capaz de:
 > uv run app
 > .\.venv\Scripts\python.exe -m src.main
 > Si aún quieres que funcione por email real, reemplaza en .env:
+> #AQ.Ab8RN6I6jR7LCJbbSrPyX
+> #oJ1w5yRm1LGx22txG0p0bofXoysuQ
 
 SMTP_USER
 SMTP_PASSWORD

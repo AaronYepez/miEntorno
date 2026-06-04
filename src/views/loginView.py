@@ -65,6 +65,7 @@ def LoginView(page: ft.Page, auth_controller):
         vertical_alignment=ft.MainAxisAlignment.CENTER,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         bgcolor=MoodDayTheme.BACKGROUND_LIGHT,
+        scroll=ft.ScrollMode.AUTO,
         appbar=ft.AppBar(
             title=ft.Text("MoodDay | Diario Emocional"),
             bgcolor=MoodDayTheme.PRIMARY,

@@ -30,32 +30,46 @@ def RegisterView(page: ft.Page, auth_controller):
         border_color=MoodDayTheme.BORDER_COLOR
     )
 
-    grado_input = ft.TextField(
+    grado_input = ft.Dropdown(
         label="Grado",
         width=190,
         border_radius=MoodDayTheme.BORDER_RADIUS,
-        keyboard_type=ft.KeyboardType.TEXT,
-        text_size=16,
-        border_color=MoodDayTheme.BORDER_COLOR
+        options=[
+            ft.dropdown.Option("1°"),
+            ft.dropdown.Option("2°"),
+            ft.dropdown.Option("3°"),
+            ft.dropdown.Option("4°"),
+            ft.dropdown.Option("5°"),
+            ft.dropdown.Option("6°"),
+        ]
     )
 
-    grupo_input = ft.TextField(
+    grupo_input = ft.Dropdown(
         label="Grupo",
         width=190,
         border_radius=MoodDayTheme.BORDER_RADIUS,
-        keyboard_type=ft.KeyboardType.TEXT,
-        text_size=16,
-        border_color=MoodDayTheme.BORDER_COLOR
+        options=[
+            ft.dropdown.Option("A"),
+            ft.dropdown.Option("B"),
+            ft.dropdown.Option("C"),
+            ft.dropdown.Option("D"),
+            ft.dropdown.Option("E"),
+            ft.dropdown.Option("F"),
+            ft.dropdown.Option("G"),
+            ft.dropdown.Option("H"),
+            ft.dropdown.Option("I"),
+            ft.dropdown.Option("J"),
+            ft.dropdown.Option("K"),
+            ft.dropdown.Option("L"),
+            ft.dropdown.Option("M"),
+        ]
     )
 
-    edad_input = ft.TextField(
+    edad_input = ft.Dropdown(
         label="Edad",
         width=190,
         border_radius=MoodDayTheme.BORDER_RADIUS,
-        keyboard_type=ft.KeyboardType.NUMBER,
-        text_size=16,
-        border_color=MoodDayTheme.BORDER_COLOR,
-        input_filter=ft.NumbersOnlyInputFilter()
+        options=[ft.dropdown.Option(str(i)) for i in range(10, 61)]
     )
 
     sexo_input = ft.Dropdown(
@@ -101,6 +115,26 @@ def RegisterView(page: ft.Page, auth_controller):
 
     error_text = ft.Text("", color=MoodDayTheme.ERROR, size=13, visible=False)
 
+    def show_quick_help(e):
+        dialog = ft.AlertDialog(
+            title=ft.Text("Modo de ayuda rápida", weight="bold"),
+            content=ft.Column(
+                [
+                    ft.Text("Respira con calma: inhala 4 segundos, mantén 4 y exhala 6 segundos."),
+                    ft.Text("Haz una pausa breve, baja los hombros y deja que tu ritmo vuelva a un estado más suave."),
+                    ft.Text("Ejercicio rápido: cierra los ojos, cuenta hasta 4, respira profundo y repite 3 veces."),
+                    ft.Text("Pedir ayuda es un acto de cuidado. Estás haciendo bien en atender tu bienestar."),
+                ],
+                spacing=10
+            ),
+            actions=[
+                ft.ElevatedButton("Cerrar", on_click=lambda e: (setattr(page.dialog, 'open', False), page.update()))
+            ]
+        )
+        page.dialog = dialog
+        page.dialog.open = True
+        page.update()
+
     def register_click(e):
         error_text.visible = False
         if not nombre_input.value:
@@ -128,6 +162,11 @@ def RegisterView(page: ft.Page, auth_controller):
             error_text.visible = True
             page.update()
             return
+        if len(numero_control_input.value) < 14:
+            error_text.value = "El número de control debe tener al menos 14 dígitos."
+            error_text.visible = True
+            page.update()
+            return
         if not grado_input.value:
             error_text.value = "El grado es obligatorio."
             error_text.visible = True
@@ -146,12 +185,12 @@ def RegisterView(page: ft.Page, auth_controller):
         try:
             edad_valor = int(edad_input.value)
         except ValueError:
-            error_text.value = "Ingresa una edad válida."
+            error_text.value = "Selecciona una edad válida."
             error_text.visible = True
             page.update()
             return
-        if edad_valor < 10 or edad_valor > 120:
-            error_text.value = "La edad debe estar entre 10 y 120 años."
+        if edad_valor < 10 or edad_valor > 60:
+            error_text.value = "Selecciona una edad entre 10 y 60 años."
             error_text.visible = True
             page.update()
             return
@@ -244,6 +283,7 @@ def RegisterView(page: ft.Page, auth_controller):
                         password_input,
                         password_confirm_input,
                         register_button,
+                        # quick-help removed from account registration (reserved for emotion entry)
                         ft.TextButton(
                             "Volver al inicio de sesión",
                             on_click=lambda _: page.go("/"),

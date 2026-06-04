@@ -41,6 +41,7 @@ def ForgotPasswordView(page: ft.Page, auth_controller):
         vertical_alignment=ft.MainAxisAlignment.CENTER,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         bgcolor=MoodDayTheme.BACKGROUND_LIGHT,
+        scroll=ft.ScrollMode.AUTO,
         appbar=ft.AppBar(
             title=ft.Text("MoodDay | Recuperar contraseña"),
             bgcolor=MoodDayTheme.SECONDARY,
@@ -195,6 +196,7 @@ def ResetPasswordView(page: ft.Page, auth_controller):
         vertical_alignment=ft.MainAxisAlignment.CENTER,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         bgcolor=MoodDayTheme.BACKGROUND_LIGHT,
+        scroll=ft.ScrollMode.AUTO,
         appbar=ft.AppBar(
             title=ft.Text("MoodDay | Cambiar contraseña"),
             bgcolor=MoodDayTheme.SECONDARY,

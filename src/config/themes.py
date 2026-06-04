@@ -33,10 +33,15 @@ class MoodDayTheme:
     TEXT_PRIMARY = "#2C3E50"  # Gris oscuro suave
     TEXT_SECONDARY = "#556E7D"  # Gris medio
     TEXT_LIGHT = "#FFFFFF"  # Blanco
-    
+    TEXT_LIGHT_SECONDARY = "#CBD5E1"  # Gris claro para temas oscuros
+
     # Bordes
     BORDER_COLOR = "#D4E5F0"  # Gris azulado claro
-    
+
+    # Fondo oscuro
+    DARK_BACKGROUND = "#0F172A"
+    DARK_CARD = "#1E293B"
+    DARK_SURFACE = "#111827"
     # Valores específicos
     BORDER_RADIUS = 15  # Radio de borde estándar
     PADDING_STANDARD = 20  # Padding estándar

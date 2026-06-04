@@ -5,6 +5,7 @@ Ejecutar: python setup_database.py
 
 import mysql.connector
 import os
+import traceback
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -22,7 +23,8 @@ def create_database():
             host=os.getenv("DB_HOST"),
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASSWORD") or "",
-            port=os.getenv("DB_PORT", "3306")
+            port=int(os.getenv("DB_PORT", "3306")),
+            use_pure=True
         )
         cursor = conn.cursor()
         db_name = os.getenv("DB_NAME", "tareas")
@@ -63,6 +65,7 @@ def create_database():
             descripcion TEXT COLLATE utf8mb4_unicode_ci,
             estado_animo VARCHAR(30) COLLATE utf8mb4_unicode_ci DEFAULT 'Neutral',
             intensidad TINYINT DEFAULT 5,
+            mensaje_motivador TEXT COLLATE utf8mb4_unicode_ci,
             fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id_tarea),
             KEY idx_usuario (id_usuario)
@@ -76,6 +79,8 @@ def create_database():
         ensure_column(cursor, "usuario", "sexo", "VARCHAR(30) COLLATE utf8mb4_unicode_ci NOT NULL")
         ensure_column(cursor, "tareas", "estado_animo", "VARCHAR(30) COLLATE utf8mb4_unicode_ci DEFAULT 'Neutral'")
         ensure_column(cursor, "tareas", "intensidad", "TINYINT DEFAULT 5")
+        ensure_column(cursor, "tareas", "mensaje_motivador", "TEXT COLLATE utf8mb4_unicode_ci")
+        ensure_column(cursor, "tareas", "razon_emocion", "TEXT COLLATE utf8mb4_unicode_ci")
 
         conn.commit()
         print("\n✅ Base de datos inicializada exitosamente!")
@@ -95,9 +100,11 @@ def create_database():
             print("   Verifica tu usuario y contraseña en .env")
         else:
             print(f"❌ Error en MySQL: {err}")
+            traceback.print_exc()
         return False
     except Exception as e:
         print(f"❌ Error: {e}")
+        traceback.print_exc()
         return False
 
 

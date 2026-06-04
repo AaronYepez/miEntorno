@@ -1,10 +1,23 @@
-import flet as ft 
+import flet as ft
+import os
+import sys
+from dotenv import load_dotenv 
 from controllers.usercontroller import AuthController
 from controllers.tareacontroller import TareaController
 from views.loginView import LoginView
 from views.dashboardView import RegisterView
 from views.recoveryView import ForgotPasswordView, ResetPasswordView
 from views.Tareaview import TareaView
+from views.recommendationsView import RecommendationsView
+from views.sleepView import SleepView
+from views.quickHelpView import QuickHelpView
+
+# Permite importar setup_database desde la raíz del proyecto cuando se ejecuta desde src
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
+from setup_database import create_database
 from config.themes import MoodDayTheme
 
 def start(page: ft.Page):
@@ -12,9 +25,17 @@ def start(page: ft.Page):
     page.title = "MoodDay - Diario Emocional"
     page.window_width = 500
     page.window_height = 750
+    page.window_resizable = True
+    page.window_min_width = 360
     page.theme_mode = ft.ThemeMode.LIGHT
     
     print("Iniciando aplicación MoodDay...")
+
+    # Verificamos y creamos la base de datos si hace falta
+    print("Verificando esquema de base de datos...")
+    if not create_database():
+        print("Error al inicializar la base de datos. Revisa .env y asegúrate de que MySQL está disponible.")
+        return
 
     # Cargamos los controladores
     try:
@@ -48,6 +69,15 @@ def start(page: ft.Page):
         elif page.route == "/dashboard":
             print("Cargando TareaView (Dashboard)...")
             page.views.append(TareaView(page, task_ctrl))
+        elif page.route == "/recomendaciones":
+            print("Cargando RecommendationsView...")
+            page.views.append(RecommendationsView(page, task_ctrl))
+        elif page.route == "/sueno":
+            print("Cargando SleepView...")
+            page.views.append(SleepView(page, task_ctrl))
+        elif page.route == "/ayuda-rapida":
+            print("Cargando QuickHelpView...")
+            page.views.append(QuickHelpView(page, task_ctrl))
         
         # Seguridad por si la ruta no existe
         if not page.views:
